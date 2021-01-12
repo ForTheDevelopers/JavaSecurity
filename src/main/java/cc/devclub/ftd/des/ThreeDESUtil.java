@@ -9,7 +9,10 @@ import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
-
+/**
+ * @Author: 【我是开发者FTD】公众号 微信号：ForTheDevelopers
+ * @Description: 3DES 算法实现
+ */
 public class ThreeDESUtil {
     // 算法名称 
     public static final String KEY_ALGORITHM = "desede";

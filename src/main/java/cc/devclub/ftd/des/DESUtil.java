@@ -13,16 +13,22 @@ import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 
 /**
- * DES加解密算法
- *
- * @author zhangchuanzhao
- * 2015-11-4 下午5:00:43
+ * @Author: 【我是开发者FTD】公众号 微信号：ForTheDevelopers
+ * @Description: DES 算法实现
  */
 public class DESUtil {
-    //算法名称 
-    public static final String KEY_ALGORITHM = "DES";
-    //算法名称/加密模式/填充方式 
-    //DES共有四种工作模式-->>ECB：电子密码本模式、CBC：加密分组链接模式、CFB：加密反馈模式、OFB：输出反馈模式
+    // 算法名称
+    public static final String DES_ALGORITHM = "DES";
+
+    /**
+     * 算法名称/加密模式/填充方式
+     * <p>
+     * DES共有四种工作模式
+     * ECB：电子密码本模式
+     * CBC：加密分组链接模式
+     * CFB：加密反馈模式
+     * OFB：输出反馈模式
+     */
     public static final String CIPHER_ALGORITHM = "DES/ECB/NoPadding";
 
     /**
@@ -39,18 +45,19 @@ public class DESUtil {
         byte input[] = HexString2Bytes(keyStr);
         DESKeySpec desKey = new DESKeySpec(input);
         //创建一个密匙工厂，然后用它把DESKeySpec转换成
-        SecretKeyFactory keyFactory = SecretKeyFactory.getInstance(KEY_ALGORITHM);
+        SecretKeyFactory keyFactory = SecretKeyFactory.getInstance(DES_ALGORITHM);
         SecretKey securekey = keyFactory.generateSecret(desKey);
+
         return securekey;
     }
 
-    private static int parse(char c) {
-        if (c >= 'a') return (c - 'a' + 10) & 0x0f;
-        if (c >= 'A') return (c - 'A' + 10) & 0x0f;
-        return (c - '0') & 0x0f;
-    }
 
-    // 从十六进制字符串到字节数组转换 
+    /**
+     * 从十六进制字符串到字节数组转换
+     *
+     * @param hexstr
+     * @return
+     */
     public static byte[] HexString2Bytes(String hexstr) {
         byte[] b = new byte[hexstr.length() / 2];
         int j = 0;
@@ -59,7 +66,19 @@ public class DESUtil {
             char c1 = hexstr.charAt(j++);
             b[i] = (byte) ((parse(c0) << 4) | parse(c1));
         }
+
         return b;
+    }
+
+    private static int parse(char c) {
+        if (c >= 'a') {
+            return (c - 'a' + 10) & 0x0f;
+        }
+        if (c >= 'A') {
+            return (c - 'A' + 10) & 0x0f;
+        }
+
+        return (c - '0') & 0x0f;
     }
 
     /**
@@ -98,10 +117,10 @@ public class DESUtil {
     }
 
     public static void main(String[] args) throws Exception {
-        String source = "zchuzhao";
-        System.out.println("原文: " + source);
+        String data = "欢迎关注【我是开发者FTD】公众号，微信号：ForTheDevelopers";
+        System.out.println("原文: " + data);
         String key = "AABBCCDDEEFF1122";
-        String encryptData = encrypt(source, key);
+        String encryptData = encrypt(data, key);
         System.out.println("加密后: " + encryptData);
         String decryptData = decrypt(encryptData, key);
         System.out.println("解密后: " + decryptData);
