@@ -7,6 +7,8 @@ import java.security.MessageDigest;
 import java.security.Security;
 
 /**
+ * 消息摘要算法 - MD（Message Digest）
+ *
  * @Author: 【我是开发者FTD】公众号 微信号：ForTheDevelopers
  * @Description: Bouncy Castle 提供的 MD 算法实现
  */

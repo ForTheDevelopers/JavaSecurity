@@ -4,6 +4,8 @@ import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 import java.security.MessageDigest;
 
 /**
+ * 消息摘要算法 - MD（Message Digest）
+ *
  * @Author: 【我是开发者FTD】公众号 微信号：ForTheDevelopers
  * @Description: JDK 提供的 MD 算法实现
  */

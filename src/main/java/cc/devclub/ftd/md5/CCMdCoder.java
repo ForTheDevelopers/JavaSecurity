@@ -3,6 +3,8 @@ package cc.devclub.ftd.md5;
 import org.apache.commons.codec.digest.DigestUtils;
 
 /**
+ * 消息摘要算法 - MD（Message Digest）
+ *
  * @Author: 【我是开发者FTD】公众号 微信号：ForTheDevelopers
  * @Description: Commons Codec 提供的 MD 算法实现
  */

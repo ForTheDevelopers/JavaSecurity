@@ -6,6 +6,8 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 /**
+ * 消息摘要算法 - HMAC（Keyed-Hashing for Message Authentication）
+ *
  * @Author: 【我是开发者FTD】公众号 微信号：ForTheDevelopers
  * @Description: JDK 提供的 HMAC 算法实现
  */
@@ -34,7 +36,7 @@ public class JDKHmacCoder {
         }
     }
 
-    // 基础MAC 算法
+    // HMAC 加密
     public static String encryptHmac(byte[] data, byte[] key, String algorithm) {
         try {
             // 1、还原密钥
@@ -76,7 +78,7 @@ public class JDKHmacCoder {
     }
 
     public static void main(String[] args) {
-        byte[] data = "欢迎关注【我是开发者FTD】公众号".getBytes();
+        byte[] data = "欢迎关注【我是开发者FTD】公众号，微信号：ForTheDevelopers".getBytes();
         // MD5
         byte[] hmacMd5KeyBytes = getHmacKey(HMAC_MD5_ALGORITHM);
         String hexHamcMd5Key = encodeHex(hmacMd5KeyBytes);

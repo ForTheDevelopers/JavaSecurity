@@ -9,6 +9,8 @@ import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 
 /**
+ * 消息摘要算法 - HMAC（Keyed-Hashing for Message Authentication）
+ *
  * @Author: 【我是开发者FTD】公众号 微信号：ForTheDevelopers
  * @Description: Commons Codec 提供的 HMAC 算法实现
  */
@@ -23,7 +25,7 @@ public class CCHmacCoder {
             SecretKey secretKey = keyGenerator.generateKey();
             // 3、获取密钥
             byte[] key = secretKey.getEncoded();
-
+            // 4、返回密钥
             return key;
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -37,7 +39,7 @@ public class CCHmacCoder {
     }
 
     public static void main(String[] args) {
-        byte[] data = "欢迎关注【我是开发者FTD】公众号".getBytes();
+        byte[] data = "欢迎关注【我是开发者FTD】公众号，微信号：ForTheDevelopers".getBytes();
         // MD5
         byte[] hmacMd5KeyBytes = getHmacKey(HmacAlgorithms.HMAC_MD5.getName());
         String hexHamcMd5Key = Hex.encodeHexString(hmacMd5KeyBytes);
