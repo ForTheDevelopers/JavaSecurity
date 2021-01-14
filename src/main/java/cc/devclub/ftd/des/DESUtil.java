@@ -7,122 +7,138 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 import java.security.InvalidKeyException;
-import java.security.Key;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 
 /**
+ * 对称加密算法 - DES/3DES
+ * <p>
+ * DES 共有五种工作模式-->>
+ * <p>
+ * ECB：电子密码本模式 -- [仅提供该模式实现]
+ * CBC：加密分组链接模式
+ * CFB：加密反馈模式
+ * OFB：输出反馈模式
+ * CTR：计数器模式
+ * <p>
+ *
  * @Author: 【我是开发者FTD】公众号 微信号：ForTheDevelopers
  * @Description: DES 算法实现
  */
 public class DESUtil {
-    // 算法名称
-    public static final String DES_ALGORITHM = "DES";
+
+    private static final String DES_ALGORITHM = "DES";
+
+    private static final String DES_CIPHER = "DES/ECB/NoPadding";
 
     /**
-     * 算法名称/加密模式/填充方式
-     * <p>
-     * DES共有四种工作模式
-     * ECB：电子密码本模式
-     * CBC：加密分组链接模式
-     * CFB：加密反馈模式
-     * OFB：输出反馈模式
-     */
-    public static final String CIPHER_ALGORITHM = "DES/ECB/NoPadding";
-
-    /**
-     * 生成密钥key对象
+     * des 加密方法
      *
-     * @param keyStr 密钥字符串
-     * @return 密钥对象
-     * @throws InvalidKeyException
-     * @throws NoSuchAlgorithmException
-     * @throws InvalidKeySpecException
+     * @param data
+     * @param key
+     * @return
      * @throws Exception
      */
-    private static SecretKey keyGenerator(String keyStr) throws Exception {
-        byte input[] = HexString2Bytes(keyStr);
-        DESKeySpec desKey = new DESKeySpec(input);
-        //创建一个密匙工厂，然后用它把DESKeySpec转换成
-        SecretKeyFactory keyFactory = SecretKeyFactory.getInstance(DES_ALGORITHM);
-        SecretKey securekey = keyFactory.generateSecret(desKey);
-
-        return securekey;
+    public static String encryptDES2Base64Str(String data, String key) throws Exception {
+        return Base64.encodeBase64String(encryptDES(data, key));
     }
 
+    public static byte[] encryptDES(String data, String key) throws Exception {
+        // 生成SecretKey对象
+        SecretKey secretKey = desKeyGenerator(key);
+        // Cipher对象实际完成加密操作
+        Cipher cipher = Cipher.getInstance(DES_CIPHER);
+        // 用密匙初始化Cipher对象
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+        // 执行加密操作
+        return cipher.doFinal(data.getBytes());
+    }
 
     /**
-     * 从十六进制字符串到字节数组转换
+     * des 解密方法
      *
-     * @param hexstr
+     * @param data
+     * @param key
+     * @return
+     * @throws Exception
+     */
+    public static String decryptDESFromBase64Str(String data, String key) throws Exception {
+        byte[] enbytes = Base64.decodeBase64(data);
+        byte[] debytes = decryptDES(enbytes, key);
+        return new String(debytes).trim();
+    }
+
+    public static byte[] decryptDES(byte[] data, String key) throws Exception {
+        // 生成SecretKey对象
+        SecretKey secretKey = desKeyGenerator(key);
+        // Cipher对象实际完成解密操作
+        Cipher cipher = Cipher.getInstance(DES_CIPHER);
+        // 用密匙初始化Cipher对象
+        cipher.init(Cipher.DECRYPT_MODE, secretKey);
+        // 执行解密操作
+        return cipher.doFinal(data);
+    }
+
+    /**
+     * DES Key 生成方法
+     *
+     * @param key
      * @return
      */
-    public static byte[] HexString2Bytes(String hexstr) {
-        byte[] b = new byte[hexstr.length() / 2];
-        int j = 0;
-        for (int i = 0; i < b.length; i++) {
-            char c0 = hexstr.charAt(j++);
-            char c1 = hexstr.charAt(j++);
-            b[i] = (byte) ((parse(c0) << 4) | parse(c1));
+    private static SecretKey desKeyGenerator(String key) {
+        try {
+            // 创建一个DESKeySpec对象
+            DESKeySpec desKey = new DESKeySpec(key.getBytes());
+            // 创建一个密匙工厂
+            SecretKeyFactory keyFactory = SecretKeyFactory.getInstance(DES_ALGORITHM);
+            // 将DESKeySpec对象转换成SecretKey对象
+            return keyFactory.generateSecret(desKey);
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (InvalidKeySpecException e) {
+            e.printStackTrace();
         }
 
-        return b;
-    }
-
-    private static int parse(char c) {
-        if (c >= 'a') {
-            return (c - 'a' + 10) & 0x0f;
-        }
-        if (c >= 'A') {
-            return (c - 'A' + 10) & 0x0f;
-        }
-
-        return (c - '0') & 0x0f;
+        return null;
     }
 
     /**
-     * 加密数据
+     * Nopadding填充时,明文不是8位的倍数时需补足
      *
-     * @param data 待加密数据
-     * @param key  密钥
-     * @return 加密后的数据
+     * @param b
+     * @return
      */
-    public static String encrypt(String data, String key) throws Exception {
-        Key deskey = keyGenerator(key);
-        // 实例化Cipher对象，它用于完成实际的加密操作
-        Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
-        SecureRandom random = new SecureRandom();
-        // 初始化Cipher对象，设置为加密模式
-        cipher.init(Cipher.ENCRYPT_MODE, deskey, random);
-        byte[] results = cipher.doFinal(data.getBytes());
-        // 执行加密操作。加密后的结果通常都会用Base64编码进行传输 
-        return Base64.encodeBase64String(results);
-    }
+    private static byte[] complementZero(byte[] b) {
+        int len = b.length;
 
-    /**
-     * 解密数据
-     *
-     * @param data 待解密数据
-     * @param key  密钥
-     * @return 解密后的数据
-     */
-    public static String decrypt(String data, String key) throws Exception {
-        Key deskey = keyGenerator(key);
-        Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
-        //初始化Cipher对象，设置为解密模式
-        cipher.init(Cipher.DECRYPT_MODE, deskey);
-        // 执行解密操作
-        return new String(cipher.doFinal(Base64.decodeBase64(data)));
+        //data不足8位以0补足8位
+        if (b.length % 8 != 0) {
+            len = b.length - b.length % 8 + 8;
+        } else {
+            return b;
+        }
+        byte[] needData = null;
+        needData = new byte[len];
+        for (int i = 0; i < len; i++) {
+            needData[i] = 0x00;
+        }
+        System.arraycopy(b, 0, needData, 0, b.length);
+
+        return needData;
     }
 
     public static void main(String[] args) throws Exception {
+        String key = "12345678";
         String data = "欢迎关注【我是开发者FTD】公众号，微信号：ForTheDevelopers";
-        System.out.println("原文: " + data);
-        String key = "AABBCCDDEEFF1122";
-        String encryptData = encrypt(data, key);
-        System.out.println("加密后: " + encryptData);
-        String decryptData = decrypt(encryptData, key);
-        System.out.println("解密后: " + decryptData);
+
+        System.out.println("des加密:");
+        byte[] b = complementZero(data.getBytes());
+        String enryptStr = encryptDES2Base64Str(new String(b), key);
+        System.out.println(enryptStr);
+        System.out.println("des解密:");
+        String deStr = decryptDESFromBase64Str(enryptStr, key);
+        System.out.println(deStr);
     }
 }
