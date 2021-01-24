@@ -25,7 +25,7 @@ import java.security.spec.InvalidKeySpecException;
  * @Author: 【我是开发者FTD】公众号 微信号：ForTheDevelopers
  * @Description: DES 算法实现
  */
-public class DESUtil {
+public class DesUtil {
 
     private static final String DES_ALGORITHM = "DES";
 

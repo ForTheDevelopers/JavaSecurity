@@ -24,7 +24,7 @@ import javax.crypto.spec.DESedeKeySpec;
  * @Author: 【我是开发者FTD】公众号 微信号：ForTheDevelopers
  * @Description: 3DES 算法实现
  */
-public class ThreeDESUtil {
+public class ThreeDesUtil {
 
     private static final String DESEDE_ALGORITHM = "DESede";
 
